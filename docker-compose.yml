@@ -1,0 +1,30 @@
+version: '3.7'
+
+services:
+
+  db:
+    image: mysql:8.0.17
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    restart: always
+    environment:
+      MYSQL_DATABASE: go-jsonb-test
+      MYSQL_USER: go-jsonb-test
+      MYSQL_PASSWORD: go-jsonb-test
+      MYSQL_ROOT_PASSWORD: go-jsonb-test
+    ports:
+      - 3309:3306 #publishes to 3309 for localhost
+
+  app:
+    image: go-jsonb-test
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      DB_USERNAME: go-jsonb-test
+      DB_PASSWORD: go-jsonb-test
+      DB_NAME: go-jsonb-test
+      DB_HOST: db
+      DB_PORT: 3306
+    depends_on:
+      - db
