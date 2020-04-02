@@ -22,7 +22,7 @@ or
     make run-local
     ```
 
-- It also has some tests, but it's similar to the main function (so not important):
+- It also has some tests and it's similar to the main function, but has more collation in select query:
     ```shell script
     make run-db
     make test

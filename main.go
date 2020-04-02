@@ -30,34 +30,19 @@ func main() {
 		log.Println("Error occurred while inserting the entry", err)
 	}
 
-	// without any collation in the select query
-	collation := ""
-	row, err := ReadRow(db, id, collation)
-	if err != nil {
-		log.Printf("Error occurred while reading the entry wihtout using collation: %s, error :%s", collation, err)
-	}
-	log.Printf("Row object (with collation: %s), %v\n", collation, row)
+	collations := []string{"", "utf8_general_ci", "utf8_unicode_ci", "utf8mb4_unicode_ci", "utf8mb3_bin", "utf8mb4_bin"}
+	for _, collation := range collations {
+		row, err := ReadRow(db, id, collation)
+		if err != nil {
+			log.Printf("Error occurred while reading the entry using collation: %s, error :%s", collation, err)
+		}
+		log.Printf("Row object (with collation: %s), %v\n", collation, row)
 
-	// our main scenario
-	collation = "utf8mb4_unicode_ci"
-	row1, err1 := ReadRow(db, id, collation)
-	if err1 != nil {
-		log.Printf("Error occurred while reading the entry using collation: %s, error :%s", collation, err1)
+		if row.ExternalUUIDs != nil {
+			log.Printf("External UUID[0]: %s, collation: %s\n",
+				uuid.Must(uuid.FromBytes(row.ExternalUUIDs[0])).String(), collation)
+		}
 	}
-	log.Printf("Row object (with collation: %s), %v\n", collation, row1)
-
-	if row1.ExternalUUIDs != nil {
-		log.Printf("External UUID[0]: %s, collation: %s\n",
-			uuid.Must(uuid.FromBytes(row1.ExternalUUIDs[0])).String(), collation)
-	}
-
-	// another scenario
-	collation = "utf8_unicode_ci"
-	row2, err2 := ReadRow(db, id, collation)
-	if err2 != nil {
-		log.Printf("Error occurred while reading the entry using collation: %s, error :%s", collation, err2)
-	}
-	log.Printf("Row object (with collation: %s), %v\n", collation, row2)
 
 	log.Println("Exiting the app!")
 }
